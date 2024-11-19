@@ -1,34 +1,26 @@
 import { db } from "@/lib/db";
+import { upsertParticipants } from "@/services/upsert-participants";
 import { Prisma } from "@prisma/client";
 import Elysia, { NotFoundError, t } from "elysia";
 
 export const updateSecretSantaEvent = new Elysia().put(
 	"/events/{eventId}",
 	async ({ body, params, set }) => {
-		const eventId = await db.event.findUnique({
-			where: { id: params.eventId },
-			select: { id: true },
-		}).then((event) => event?.id);
+		const eventId = await db.event
+			.findUnique({
+				where: { id: params.eventId },
+				select: { id: true },
+			})
+			.then((event) => event?.id);
 		if (!eventId) throw new NotFoundError();
 
-		const response = await db.$transaction(
-			body.participants.map((part) =>
-				db.participant.upsert({
-					create: part,
-					update: {},
-					where: { email: part.email },
-					select: {
-						id: true,
-					},
-				}),
-			),
-		);
+		const participants = await upsertParticipants(body.participants);
 
 		await db.eventParticipant.createMany({
-			data: response.map((participant) => {
+			data: participants.map((id) => {
 				return {
 					eventId,
-					participantId: participant.id,
+					participantId: id,
 				};
 			}),
 		});
@@ -36,7 +28,7 @@ export const updateSecretSantaEvent = new Elysia().put(
 		set.status = 201;
 		return {
 			event: eventId,
-			participants: response.map((participant) => participant.id),
+			participants,
 		};
 	},
 	{

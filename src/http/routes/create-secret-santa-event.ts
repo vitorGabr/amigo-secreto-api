@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { upsertParticipants } from "@/services/upsert-participants";
 import { Prisma } from "@prisma/client";
 import Elysia, { t } from "elysia";
 
@@ -6,40 +7,26 @@ export const createSecretSantaEvent = new Elysia().post(
 	"/events",
 	async ({ body, set }) => {
 		set.status = 201;
-		const eventId = Number.isNaN(+body.event)
-			? await db.event
-					.create({
-						data: { name: `${body.event}` },
-						select: { id: true },
-					})
-					.then((event) => event.id)
-			: +body.event;
+		const eventId = await db.event
+			.create({
+				data: { name: `${body.event}` },
+				select: { id: true },
+			})
+			.then((event) => event.id);
 
-		const response = await db.$transaction(
-			body.participants.map((part) =>
-				db.participant.upsert({
-					create: part,
-					update: {},
-					where: { email: part.email },
-					select: {
-						id: true,
-					},
-				}),
-			),
-		);
-
+		const participants = await upsertParticipants(body.participants);
 		await db.eventParticipant.createMany({
-			data: response.map((participant) => {
+			data: participants.map((id) => {
 				return {
 					eventId,
-					participantId: participant.id,
+					participantId: id,
 				};
 			}),
 		});
 
 		return {
 			event: eventId,
-			participants: response.map((participant) => participant.id),
+			participants,
 		};
 	},
 	{
@@ -50,7 +37,7 @@ export const createSecretSantaEvent = new Elysia().post(
 					email: t.String(),
 				}),
 			),
-			event: t.Union([t.String(), t.Number()]),
+			event: t.String(),
 		}),
 		response: t.Object({
 			event: t.Number(),
@@ -60,13 +47,6 @@ export const createSecretSantaEvent = new Elysia().post(
 			if (error instanceof Prisma.PrismaClientKnownRequestError) {
 				set.status = 400;
 				if (error.meta) {
-					if ("modelName" in error.meta) {
-						if (error.meta.modelName === "EventParticipant") {
-							return {
-								error: "Event already exists",
-							};
-						}
-					}
 					if (Array.isArray(error.meta.target)) {
 						if (error.meta.target.includes("participantId")) {
 							return {
