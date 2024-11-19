@@ -17,6 +17,7 @@ export const getSecretFriend = new Elysia().get(
 							},
 						},
 					},
+					take: 1,
 					where: {
 						eventId: params.eventId,
 					},
@@ -24,7 +25,13 @@ export const getSecretFriend = new Elysia().get(
 			},
 		});
 
-		return response?.receiver[0];
+		if(!response?.receiver.length) {
+			throw new Error("No participant found");
+		}
+
+		return {
+			name: response?.receiver[0].giver.name,
+		};
 	},
 	{
 		params: t.Object({
@@ -33,5 +40,8 @@ export const getSecretFriend = new Elysia().get(
 		query: t.Object({
 			participantId: t.String(),
 		}),
+		response: t.Object({
+			name: t.String(),
+		})
 	},
 );

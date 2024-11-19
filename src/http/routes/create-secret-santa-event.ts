@@ -1,6 +1,5 @@
 import { db } from "@/lib/db";
-import { Prisma } from "@prisma/client";
-import Elysia, { NotFoundError, t } from "elysia";
+import Elysia, {  t } from "elysia";
 
 export const createSecretSantaEvent = new Elysia().post(
 	"/events",
@@ -8,7 +7,7 @@ export const createSecretSantaEvent = new Elysia().post(
 		set.status = 201;
 		const event = await db.event.create({
 			data: {
-				name: body.eventName,
+				name: body.event,
 			},
 			select: {
 				id: true,
@@ -17,7 +16,7 @@ export const createSecretSantaEvent = new Elysia().post(
 		const response = await db.$transaction(
 			body.participants.map((part) =>
 				db.participant.upsert({
-					create: { name: part.name, email: part.email },
+					create: part,
 					update: {},
 					where: { email: part.email },
 					select: {
@@ -49,18 +48,11 @@ export const createSecretSantaEvent = new Elysia().post(
 					email: t.String(),
 				}),
 			),
-			eventName: t.String(),
+			event: t.String(),
 		}),
-		error: ({ error }) => {
-			if (error instanceof Prisma.PrismaClientKnownRequestError) {
-				if (error.meta) {
-					if ("target" in error.meta && Array.isArray(error.meta.target)) {
-						if (error.meta.target.includes("email")) {
-							throw new NotFoundError("Email already exists");
-						}
-					}
-				}
-			}
-		},
+		response: t.Object({
+			event: t.Number(),
+			participants: t.Array(t.String()),
+		}),
 	},
 );
