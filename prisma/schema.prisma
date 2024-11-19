@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model Participant {
+  id String @id @default(cuid())
+  name String
+  email String @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  eventParticipant EventParticipant[]
+  giver Match[] @relation("Giver")
+  receiver Match[] @relation("Receiver")
+  @@map("participants")
+}
+
+model Event {
+  id Int @id @default(autoincrement())
+  name String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  eventParticipant EventParticipant[]
+  matches Match[]
+  @@map("events")
+}
+
+model EventParticipant {
+  id Int @id @default(autoincrement())
+  eventId Int
+  participantId String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  event Event @relation(fields: [eventId], references: [id])
+  participant Participant @relation(fields: [participantId], references: [id])
+
+  @@unique([eventId, participantId])
+  @@map("event_participants")
+}
+
+model Match {
+  id Int @id @default(autoincrement())
+  eventId Int
+  giverId String
+  receiverId String
+
+  event Event @relation(fields: [eventId], references: [id])
+  giver Participant @relation("Giver", fields: [giverId], references: [id])
+  receiver Participant @relation("Receiver", fields: [receiverId], references: [id])
+
+  @@unique([eventId, giverId, receiverId])
+  @@map("matches")
+}
