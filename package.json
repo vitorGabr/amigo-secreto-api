@@ -3,17 +3,23 @@
   "version": "1.0.50",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/http/server.ts"
+    "dev": "bun run --watch src/http/server.ts",
+    "email": "email dev --dir src/emails"
   },
   "dependencies": {
     "@elysiajs/swagger": "^1.1.6",
     "@prisma/client": "^5.22.0",
-    "elysia": "latest"
+    "@react-email/components": "^0.0.28",
+    "elysia": "latest",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
+    "@types/react": "^18.3.12",
     "bun-types": "latest",
-    "prisma": "^5.22.0"
+    "prisma": "^5.22.0",
+    "react-email": "^3.0.2"
   },
   "module": "src/index.js"
 }
