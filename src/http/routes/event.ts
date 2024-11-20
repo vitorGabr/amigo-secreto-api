@@ -1,30 +1,8 @@
 import { eventService } from "@/services/event-service";
 import { participantService } from "@/services/participant-service";
-import { Prisma } from "@prisma/client";
 import Elysia, { NotFoundError, t } from "elysia";
 
 export const eventRoute = new Elysia()
-	.onError(({ error, set }) => {
-		if (error instanceof Prisma.PrismaClientKnownRequestError) {
-			set.status = 400;
-			if (error.meta) {
-				if ("modelName" in error.meta) {
-					if (error.meta.modelName === "EventParticipant") {
-						return {
-							error: "Event already exists",
-						};
-					}
-				}
-				if (Array.isArray(error.meta.target)) {
-					if (error.meta.target.includes("participantId")) {
-						return {
-							error: "Participant already exists in the event",
-						};
-					}
-				}
-			}
-		}
-	})
 	.post(
 		"/events",
 		async ({ body, set }) => {

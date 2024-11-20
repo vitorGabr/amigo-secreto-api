@@ -1,8 +1,8 @@
+import { GiftAssignmentEmail } from "@/emails/gift-assignment-email";
 import { prisma } from "@/lib/prisma";
 import { resend } from "@/lib/resend";
-import { GiftAssignmentEmail } from "@/emails/gift-assignment-email";
-import { eventService } from "./event-service";
 import { NotFoundError } from "elysia";
+import { eventService } from "./event-service";
 
 type Participant = {
 	id: string;
@@ -31,7 +31,7 @@ class DrawService {
 	}
 
 	private generateMatches(participants: Participant[]) {
-		const shuffledParticipants = participants.sort(() => Math.random() - 0.5)
+		const shuffledParticipants = participants.sort(() => Math.random() - 0.5);
 		return shuffledParticipants.map((participant, index) => {
 			const nextParticipant = participants[index + 1] || participants[0];
 			return {

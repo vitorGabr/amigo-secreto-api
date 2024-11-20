@@ -1,9 +1,9 @@
 import {
-	Html,
-	Head,
-	Preview,
 	Body,
 	Container,
+	Head,
+	Html,
+	Preview,
 	Section,
 	Text,
 } from "@react-email/components";
