@@ -71,7 +71,7 @@ class DrawService {
 		}
 
 		const matches = this.generateMatches(participants);
-		await this.notify(matches, event.name);
+		this.notify(matches, event.name);
 
 		await prisma.match.createMany({
 			data: matches.map((match) => ({
