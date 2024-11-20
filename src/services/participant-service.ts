@@ -1,30 +1,13 @@
-import { db } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@prisma/client";
 
 type Participant = Prisma.ParticipantCreateInput;
 
 class ParticipantService {
-	async findParticipantsByEventId(eventId: number) {
-		const response = await db.participant.findMany({
-			where: {
-				eventParticipant: {
-					some: {
-						eventId,
-					},
-				},
-			},
-			select: {
-				id: true,
-			},
-		});
-
-		return response.map((participant) => participant.id);
-	}
-
 	async upsertParticipants(participants: Participant[]) {
-		const response = await db.$transaction(
+		const response = await prisma.$transaction(
 			participants.map((part) =>
-				db.participant.upsert({
+				prisma.participant.upsert({
 					create: part,
 					update: {},
 					where: { email: part.email },
@@ -42,7 +25,7 @@ class ParticipantService {
 		eventId: number,
 	) {
 		const participantIds = await this.upsertParticipants(participants);
-		await db.eventParticipant.createMany({
+		await prisma.eventParticipant.createMany({
 			data: participantIds.map((id) => {
 				return {
 					eventId,
@@ -54,7 +37,7 @@ class ParticipantService {
 	}
 
 	async deleteParticipants(participantIds: string[]) {
-		await db.participant.deleteMany({
+		await prisma.participant.deleteMany({
 			where: {
 				id: {
 					in: participantIds,

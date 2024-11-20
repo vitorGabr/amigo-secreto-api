@@ -1,10 +1,10 @@
-import { db } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
 type Event = { name: string };
 
 class EventService {
 	async createEvent(event: Event) {
-		const response = await db.event.create({
+		const response = await prisma.event.create({
 			data: { name: event.name },
 			select: {
 				id: true,
@@ -15,7 +15,7 @@ class EventService {
 	}
 
 	async getEvent(eventId: number) {
-		const response = await db.event.findFirst({
+		const response = await prisma.event.findFirst({
 			where: { id: eventId },
 			select: {
 				id: true,
@@ -27,7 +27,7 @@ class EventService {
 	}
 
 	async updateEvent(eventId: number, event: Event) {
-		const response = await db.event.update({
+		const response = await prisma.event.update({
 			where: { id: eventId },
 			data: { name: event.name },
 			select: {
@@ -39,7 +39,7 @@ class EventService {
 	}
 
 	async deleteEvent(eventId: number) {
-		await db.event.delete({
+		await prisma.event.delete({
 			where: { id: eventId },
 		});
 	}

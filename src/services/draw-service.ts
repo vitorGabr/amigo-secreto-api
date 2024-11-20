@@ -1,15 +1,38 @@
-import { db } from "@/lib/db";
-import { participantService } from "./participant-service";
+import { prisma } from "@/lib/prisma";
+import { resend } from "@/lib/resend";
+import { GiftAssignmentEmail } from "@/emails/gift-assignment-email";
+import { eventService } from "./event-service";
+import { NotFoundError } from "elysia";
 
-type Participant = string;
+type Participant = {
+	id: string;
+	name: string;
+	email: string;
+};
 
 class DrawService {
-	private generateSuflledParticipants(participants: Participant[]) {
-		return participants.sort(() => Math.random() - 0.5);
+	private async findParticipantsByEventId(eventId: number) {
+		const response = await prisma.participant.findMany({
+			where: {
+				eventParticipant: {
+					some: {
+						eventId,
+					},
+				},
+			},
+			select: {
+				id: true,
+				name: true,
+				email: true,
+			},
+		});
+
+		return response;
 	}
 
 	private generateMatches(participants: Participant[]) {
-		return participants.map((participant, index) => {
+		const shuffledParticipants = participants.sort(() => Math.random() - 0.5)
+		return shuffledParticipants.map((participant, index) => {
 			const nextParticipant = participants[index + 1] || participants[0];
 			return {
 				giver: participant,
@@ -18,22 +41,43 @@ class DrawService {
 		});
 	}
 
-	async execute(eventId: number) {
-		const participants =
-			await participantService.findParticipantsByEventId(eventId);
+	private async notify(
+		data: {
+			giver: Participant;
+			reciver: Participant;
+		}[],
+		eventName: string,
+	) {
+		await resend.batch.send(
+			data.map((participant) => ({
+				from: "Acme <onboarding@resend.dev>",
+				to: "macstudios.info@gmail.com",
+				subject: "Amigo Secreto",
+				react: GiftAssignmentEmail({
+					participantName: participant.reciver.name,
+					recipientName: participant.giver.name,
+					eventName: eventName,
+				}),
+			})),
+		);
+	}
 
+	async execute(eventId: number) {
+		const event = await eventService.getEvent(eventId);
+		if (!event) throw new NotFoundError();
+		const participants = await this.findParticipantsByEventId(eventId);
 		if (participants.length < 2) {
 			throw new Error("Not enough participants in group");
 		}
 
-		const shuffledParticipants = this.generateSuflledParticipants(participants);
-		const matches = this.generateMatches(shuffledParticipants);
+		const matches = this.generateMatches(participants);
+		await this.notify(matches, event.name);
 
-		await db.match.createMany({
+		await prisma.match.createMany({
 			data: matches.map((match) => ({
 				eventId: eventId,
-				giverId: match.giver,
-				receiverId: match.reciver,
+				giverId: match.giver.id,
+				receiverId: match.reciver.id,
 			})),
 		});
 	}

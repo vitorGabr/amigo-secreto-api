@@ -1,9 +1,9 @@
-import { db } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 import { NotFoundError } from "elysia";
 
 class RevealService {
 	async execute(participant: string, eventId: number) {
-		const response = await db.participant.findFirst({
+		const response = await prisma.participant.findFirst({
 			where: {
 				id: participant,
 			},
