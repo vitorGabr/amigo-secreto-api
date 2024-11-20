@@ -1,14 +1,16 @@
-import { Elysia } from "elysia";
-import { createSecretSantaEvent } from "./routes/create-secret-santa-event";
-import { generatePairings } from "./routes/generate-pairings";
-import { getSecretFriend } from "./routes/get-secret-friend";
 import swagger from "@elysiajs/swagger";
+import { Elysia } from "elysia";
+import { drawRoute } from "./routes/draw";
+import { eventRoute } from "./routes/event";
+import { participantRoute } from "./routes/participant";
+import { revealRoute } from "./routes/reveal";
 
 const app = new Elysia()
 	.use(swagger())
-	.use(createSecretSantaEvent)
-	.use(generatePairings)
-	.use(getSecretFriend);
+	.use(eventRoute)
+	.use(drawRoute)
+	.use(revealRoute)
+	.use(participantRoute);
 
 app.listen(3333, () => {
 	console.log("🛸 HTTP server running!");
