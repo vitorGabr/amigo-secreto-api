@@ -6,7 +6,7 @@ import { createAuthLink } from "@/utils/create-auth-link";
 import { randomUUIDv7 } from "bun";
 import dayjs from "dayjs";
 
-class AuthLinkUseCase {
+class AuthUseCase {
 	async sendAuthLink(data: { email: string }) {
 		const userFromEmail = await userRepository.findByEmail(data.email);
 
@@ -36,6 +36,10 @@ class AuthLinkUseCase {
 		await authLinkRepository.delete(authLinkFromCode.id);
 		return authLinkFromCode;
 	}
+
+	async signUp(user: { email: string; name: string }) {
+		await userRepository.create(user);
+	}
 }
 
-export const authLinkUseCase = new AuthLinkUseCase();
+export const authUseCase = new AuthUseCase();
