@@ -1,7 +1,4 @@
-import {
-	createEvent,
-	updateEventParticipants,
-} from "@/handlers/events.handler";
+import { eventsUseCase } from "@/use-cases/events";
 import Elysia, { t } from "elysia";
 import { authentication } from "../middleware/authentication";
 
@@ -13,7 +10,10 @@ export const eventsRoute = new Elysia({
 		"/events",
 		async ({ body, getCurrentUser, set }) => {
 			const { sub } = await getCurrentUser();
-			const response = await createEvent({ userId: sub, ...body });
+			const response = await eventsUseCase.createEvent({
+				event: { ownerId: sub, name: body.event },
+				participants: body.participants,
+			});
 
 			set.status = 201;
 			return response;
@@ -38,8 +38,8 @@ export const eventsRoute = new Elysia({
 		"/events/:eventId/participants",
 		async ({ params, body, getCurrentUser, set }) => {
 			const { sub } = await getCurrentUser();
-			await updateEventParticipants({
-				userId: sub,
+			await eventsUseCase.updateEventParticipants({
+				ownerId: sub,
 				eventId: params.eventId,
 				participants: body,
 			});

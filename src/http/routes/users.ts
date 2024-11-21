@@ -1,4 +1,4 @@
-import { createUser } from "@/handlers/users.handler";
+import { usersUseCases } from "@/use-cases/users";
 import Elysia, { t } from "elysia";
 
 export const usersRoute = new Elysia({
@@ -6,7 +6,7 @@ export const usersRoute = new Elysia({
 }).post(
 	"/users",
 	async ({ body, set }) => {
-		await createUser(body);
+		await usersUseCases.create(body);
 		set.status = 201;
 	},
 	{

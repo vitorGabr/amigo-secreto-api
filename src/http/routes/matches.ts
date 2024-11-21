@@ -1,8 +1,8 @@
-import { generateParings } from "@/handlers/parings.handler";
+import { matchesUseCases } from "@/use-cases/matches";
 import Elysia, { t } from "elysia";
 import { authentication } from "../middleware/authentication";
 
-export const paringsRoute = new Elysia({
+export const matchesRoute = new Elysia({
 	tags: ["parings"],
 })
 	.use(authentication)
@@ -10,7 +10,7 @@ export const paringsRoute = new Elysia({
 		"/events/:eventId/pairings",
 		async ({ params, getCurrentUser, set }) => {
 			const { sub } = await getCurrentUser();
-			await generateParings({ eventId: params.eventId, userId: sub });
+			await matchesUseCases.generate({ eventId: params.eventId, userId: sub });
 			set.status = 201;
 		},
 		{

@@ -1,11 +1,8 @@
-import {
-	authenticateFromLink,
-	sendAuthLink,
-} from "@/handlers/authenticate.handler";
+import { authLinkUseCase } from "@/use-cases/auth-link";
 import Elysia, { t } from "elysia";
 import { authentication } from "../middleware/authentication";
 
-export const authRoute = new Elysia({
+export const authRoutes = new Elysia({
 	tags: ["auth"],
 })
 	.use(authentication)
@@ -13,7 +10,7 @@ export const authRoute = new Elysia({
 		"/authenticate",
 		async ({ body }) => {
 			const { email } = body;
-			const response = await sendAuthLink({ email });
+			const response = await authLinkUseCase.sendAuthLink({ email });
 			return response;
 		},
 		{
@@ -28,7 +25,9 @@ export const authRoute = new Elysia({
 	.get(
 		"/auth-links/authenticate",
 		async ({ signUser, query, redirect: internalRedirect }) => {
-			const reponse = await authenticateFromLink({ code: query.code });
+			const reponse = await authLinkUseCase.authenticateFromLink({
+				code: query.code,
+			});
 			const token = await signUser({
 				sub: reponse.userId,
 			});
