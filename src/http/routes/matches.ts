@@ -3,7 +3,7 @@ import Elysia, { t } from "elysia";
 import { authentication } from "../middleware/authentication";
 
 export const matchesRoute = new Elysia({
-	tags: ["parings"],
+	tags: ["matches"],
 })
 	.use(authentication)
 	.get(
