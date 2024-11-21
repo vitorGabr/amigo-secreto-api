@@ -1,6 +1,6 @@
+import { eventParticipantsUseCase } from "@/use-cases/event-participants";
 import Elysia, { t } from "elysia";
 import { authentication } from "../middleware/authentication";
-import { eventParticipantsUseCase } from "@/use-cases/event-participants";
 
 export const eventParticipantsRoute = new Elysia({
 	tags: ["events-participants"],

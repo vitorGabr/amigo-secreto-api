@@ -71,4 +71,4 @@ export default function AuthenticationMagicLinkTemplate({
 AuthenticationMagicLinkTemplate.PreviewProps = {
 	userEmail: "teste@teste.com",
 	authLink: "https://pizza-shop.com/auth/magic-link?token=123456",
-}
+};

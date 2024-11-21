@@ -34,13 +34,13 @@ model AuthLink {
 }
 
 model Event {
-  id        Int      @id @default(autoincrement())
-  name      String
-  owner     User     @relation("EventOwner", fields: [ownerId], references: [id])
-  ownerId   String
+  id           Int       @id @default(autoincrement())
+  name         String
+  owner        User      @relation("EventOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId      String
   exchangeDate DateTime? @map("exchange_date")
-  budget    Float?
-  description String?
+  budget       Float?
+  description  String?
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -53,9 +53,9 @@ model Event {
 
 model EventParticipant {
   id        Int      @id @default(autoincrement())
-  event     Event    @relation(fields: [eventId], references: [id])
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId   Int
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -68,9 +68,9 @@ model Match {
   id         Int    @id @default(autoincrement())
   event      Event  @relation(fields: [eventId], references: [id])
   eventId    Int
-  giver      User   @relation("Giver", fields: [giverId], references: [id])
+  giver      User   @relation("Giver", fields: [giverId], references: [id], onDelete: Cascade)
   giverId    String
-  receiver   User   @relation("Receiver", fields: [receiverId], references: [id])
+  receiver   User   @relation("Receiver", fields: [receiverId], references: [id], onDelete: Cascade)
   receiverId String
 
   @@unique([eventId, giverId, receiverId])

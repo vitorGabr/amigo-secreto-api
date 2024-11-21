@@ -8,11 +8,7 @@ class EventsUseCase {
 		return response;
 	}
 
-	async update(
-		id: number,
-		ownerId: string,
-		data: Prisma.EventUpdateInput,
-	) {
+	async update(id: number, ownerId: string, data: Prisma.EventUpdateInput) {
 		const event = await eventRepository.get(id, ownerId);
 		if (!event) throw new UnauthorizedError();
 		const response = await eventRepository.update(id, data);

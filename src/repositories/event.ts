@@ -41,7 +41,7 @@ class EventRepository {
 		return prisma.event.update({
 			where: { id: id },
 			data,
-		})
+		});
 	}
 
 	async delete(eventId: number) {

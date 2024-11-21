@@ -111,4 +111,4 @@ GiftAssignmentEmail.PreviewProps = {
 	description: "Troca de presentes",
 	budget: 50,
 	eventDate: new Date(),
-}
+};
