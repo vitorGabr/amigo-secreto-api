@@ -7,54 +7,67 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-model Participant {
-  id String @id @default(cuid())
-  name String
-  email String @unique
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  eventsCreated       Event[]            @relation("EventOwner")
+  eventParticipations EventParticipant[]
+  sentMatches         Match[]            @relation("Giver")
+  receivedMatches     Match[]            @relation("Receiver")
+  authLinks           AuthLink[]
 
-  eventParticipant EventParticipant[]
-  giver Match[] @relation("Giver")
-  receiver Match[] @relation("Receiver")
-  @@map("participants")
+  @@map("users")
+}
+
+model AuthLink {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  code      String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("auth_links")
 }
 
 model Event {
-  id Int @id @default(autoincrement())
-  name String
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  name      String
+  owner     User     @relation("EventOwner", fields: [ownerId], references: [id])
+  ownerId   String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  eventParticipant EventParticipant[]
-  matches Match[]
+  participants EventParticipant[]
+  matches      Match[]
+
   @@map("events")
 }
 
 model EventParticipant {
-  id Int @id @default(autoincrement())
-  eventId Int
-  participantId String
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  event     Event    @relation(fields: [eventId], references: [id])
+  eventId   Int
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  event Event @relation(fields: [eventId], references: [id])
-  participant Participant @relation(fields: [participantId], references: [id])
-
-  @@unique([eventId, participantId])
+  @@unique([eventId, userId])
   @@map("event_participants")
 }
 
 model Match {
-  id Int @id @default(autoincrement())
-  eventId Int
-  giverId String
+  id         Int    @id @default(autoincrement())
+  event      Event  @relation(fields: [eventId], references: [id])
+  eventId    Int
+  giver      User   @relation("Giver", fields: [giverId], references: [id])
+  giverId    String
+  receiver   User   @relation("Receiver", fields: [receiverId], references: [id])
   receiverId String
-
-  event Event @relation(fields: [eventId], references: [id])
-  giver Participant @relation("Giver", fields: [giverId], references: [id])
-  receiver Participant @relation("Receiver", fields: [receiverId], references: [id])
 
   @@unique([eventId, giverId, receiverId])
   @@map("matches")
