@@ -10,26 +10,33 @@ class AuthUseCase {
 	async sendAuthLink(data: { email: string }) {
 		const userFromEmail = await userRepository.findByEmail(data.email);
 
-		if (!userFromEmail) throw new UnauthorizedError();
+		if (!userFromEmail) {
+			throw new UnauthorizedError();
+		}
 
 		const authLinkCode = randomUUIDv7();
-		await authLinkRepository.create({
-			userId: userFromEmail.id,
-			code: authLinkCode,
-		});
 		const authLink = createAuthLink(authLinkCode);
-		await sendAuthLinkEmail(userFromEmail.email, authLink);
+
+		await Promise.all([
+			authLinkRepository.create({
+				userId: userFromEmail.id,
+				code: authLinkCode,
+			}),
+			sendAuthLinkEmail(userFromEmail.email, authLink),
+		]);
 
 		return {
-			authLink: authLink.toString(),
+			authLink,
 		};
 	}
 
 	async authenticateFromLink(data: { code: string }) {
 		const authLinkFromCode = await authLinkRepository.findByCode(data.code);
-		if (!authLinkFromCode) throw new UnauthorizedError();
 
-		if (dayjs().diff(authLinkFromCode.createdAt, "days") > 7) {
+		if (
+			!authLinkFromCode ||
+			dayjs().diff(authLinkFromCode.createdAt, "days") > 7
+		) {
 			throw new UnauthorizedError();
 		}
 

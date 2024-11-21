@@ -1,6 +1,4 @@
 import { prisma } from "@/lib/prisma";
-import { resend } from "@/mails/client";
-import { AuthenticationMagicLinkTemplate } from "@/mails/template/authentication-magic-link";
 import type { Prisma } from "@prisma/client";
 
 class AuthLinkRepository {

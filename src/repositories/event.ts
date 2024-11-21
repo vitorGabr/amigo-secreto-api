@@ -9,6 +9,14 @@ class EventRepository {
 			select: {
 				id: true,
 				name: true,
+				budget: true,
+				exchangeDate: true,
+				description: true,
+				owner: {
+					select: {
+						name: true,
+					},
+				},
 			},
 		});
 		if (!event) throw new UnauthorizedError();
@@ -27,6 +35,17 @@ class EventRepository {
 
 	async findFirst(data: { id: number; ownerId: string }) {
 		return prisma.event.findFirst({ where: data, select: { id: true } });
+	}
+
+	async update(id: number, data: Prisma.EventUpdateInput) {
+		return prisma.event.update({
+			where: { id: id },
+			data,
+		})
+	}
+
+	async delete(eventId: number) {
+		await prisma.event.delete({ where: { id: eventId } });
 	}
 }
 

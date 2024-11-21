@@ -1,24 +1,35 @@
 import { resend } from "../client";
-import { GiftAssignmentEmail } from "../template/gift-assignment-email";
+import GiftAssignmentEmail from "../template/gift-assignment-email";
 
-type User = { name: string; id: string; email: string };
-type Math = {
-	giver: User;
-	receiver: User;
+type Match = { name: string; id: string; email: string };
+type SendMatchingParticipantsEmail = {
+	matches: {
+		giver: Match;
+		receiver: Match;
+	}[];
+	eventName: string;
+	ownerName: string;
+	budget?: number;
+	exchangeDate?: Date;
+	description?: string;
 };
+
 export async function sendMatchingParticipantsEmail(
-	matches: Math[],
-	eventName: string,
+	data: SendMatchingParticipantsEmail,
 ) {
 	await resend.batch.send(
-		matches.map((participant) => ({
+		data.matches.map((participant) => ({
 			from: "Acme <onboarding@resend.dev>",
 			to: participant.giver.email,
 			subject: "Amigo Secreto",
 			react: GiftAssignmentEmail({
-				participantName: participant.receiver.name,
-				recipientName: participant.giver.name,
-				eventName,
+				participantName: participant.giver.name,
+				recipientName: participant.receiver.name,
+				eventName: data.eventName,
+				ownerName: data.ownerName,
+				budget: data.budget,
+				eventDate: data.exchangeDate,
+				description: data.description,
 			}),
 		})),
 	);

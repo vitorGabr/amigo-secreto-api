@@ -1,7 +1,6 @@
 import { UnauthorizedError } from "@/http/errors/unauthorized-error";
 import { sendMatchingParticipantsEmail } from "@/mails/handlers/send-matching-participants-email";
 import { eventRepository } from "@/repositories/event";
-import { matchRepository } from "@/repositories/match";
 import { userRepository } from "@/repositories/user";
 
 class MatchedUseCases {
@@ -9,32 +8,34 @@ class MatchedUseCases {
 		eventId: number;
 		userId: string;
 	}) {
-		const event = await eventRepository.get(data.eventId, data.userId);
-		if (!event) throw new UnauthorizedError();
+        const [event, participants] = await Promise.all([
+            eventRepository.get(data.eventId, data.userId),
+            userRepository.findManyByEventParticipation(data.eventId)
+        ]);
 
-		const participants = await userRepository.findManyByEventParticipation(
-			data.eventId,
-		);
-		if (participants.length < 2) {
-			throw new Error("Not enough participants in group");
-		}
+        if (!event) throw new UnauthorizedError();
 
-		const suffledParticipants = participants.sort(() => Math.random() - 0.5);
-		const matches = suffledParticipants.map((participant, index) => {
-			const nextParticipant = participants[index + 1] || participants[0];
-			return {
-				giver: participant,
-				receiver: nextParticipant,
-			};
-		});
-		await matchRepository.createMany(
-			matches.map((match) => ({
-				eventId: event.id,
-				giverId: match.giver.id,
-				receiverId: match.receiver.id,
-			})),
-		);
-		sendMatchingParticipantsEmail(matches, event.name);
+        if (participants.length < 2) {
+            throw new Error("Not enough participants in group");
+        }
+
+        participants.sort(() => Math.random() - 0.5);
+        const matches = participants.map((participant, index) => {
+            const nextParticipant = participants[index + 1] || participants[0];
+            return {
+                giver: participant,
+                receiver: nextParticipant,
+            };
+        });
+
+		sendMatchingParticipantsEmail({
+            eventName: event.name,
+            ownerName: event.owner.name,
+            matches,
+            budget: event.budget || undefined,
+            exchangeDate: event.exchangeDate || undefined,
+            description: event.description || undefined,
+        });
 	}
 }
 

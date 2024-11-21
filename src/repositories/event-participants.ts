@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@prisma/client";
 
-class EventParticipationRepository {
+class EventParticipantsRepository {
 	async createMany(data: Prisma.EventParticipantCreateManyInput[]) {
 		return prisma.eventParticipant.createMany({
 			data: data,
@@ -9,4 +9,4 @@ class EventParticipationRepository {
 	}
 }
 
-export const eventParticipationRepository = new EventParticipationRepository();
+export const eventParticipantsRepository = new EventParticipantsRepository();

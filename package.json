@@ -4,7 +4,7 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"dev": "bun run --watch src/http/server.ts",
-		"email": "email dev --dir src/emails"
+		"email": "email dev --dir src/mails"
 	},
 	"dependencies": {
 		"@elysiajs/cookie": "^0.8.0",

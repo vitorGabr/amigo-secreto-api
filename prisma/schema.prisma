@@ -38,6 +38,10 @@ model Event {
   name      String
   owner     User     @relation("EventOwner", fields: [ownerId], references: [id])
   ownerId   String
+  exchangeDate DateTime? @map("exchange_date")
+  budget    Float?
+  description String?
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 

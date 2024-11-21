@@ -1,5 +1,5 @@
 import { resend } from "../client";
-import { AuthenticationMagicLinkTemplate } from "../template/authentication-magic-link";
+import AuthenticationMagicLinkTemplate from "../template/authentication-magic-link";
 
 export async function sendAuthLinkEmail(email: string, authLink: URL) {
 	await resend.emails.send({

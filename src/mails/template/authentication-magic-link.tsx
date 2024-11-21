@@ -19,7 +19,7 @@ interface AuthenticationMagicLinkTemplateProps {
 	authLink: string;
 }
 
-export function AuthenticationMagicLinkTemplate({
+export default function AuthenticationMagicLinkTemplate({
 	userEmail,
 	authLink,
 }: AuthenticationMagicLinkTemplateProps) {
@@ -66,4 +66,9 @@ export function AuthenticationMagicLinkTemplate({
 			</Tailwind>
 		</Html>
 	);
+}
+
+AuthenticationMagicLinkTemplate.PreviewProps = {
+	userEmail: "teste@teste.com",
+	authLink: "https://pizza-shop.com/auth/magic-link?token=123456",
 }

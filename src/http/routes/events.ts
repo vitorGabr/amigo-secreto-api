@@ -10,9 +10,9 @@ export const eventsRoute = new Elysia({
 		"/events",
 		async ({ body, getCurrentUser, set }) => {
 			const { sub } = await getCurrentUser();
-			const response = await eventsUseCase.createEvent({
-				event: { ownerId: sub, name: body.event },
-				participants: body.participants,
+			const response = await eventsUseCase.create({
+				...body,
+				ownerId: sub,
 			});
 
 			set.status = 201;
@@ -20,49 +20,47 @@ export const eventsRoute = new Elysia({
 		},
 		{
 			body: t.Object({
-				participants: t.Array(
-					t.Object({
-						name: t.String(),
-						email: t.String(),
-					}),
-				),
-				event: t.String(),
+				name: t.String(),
+				exchangeDate: t.Optional(t.String({ format: "date" })),
+				budget: t.Optional(t.Number()),
+				description: t.Optional(t.String()),
 			}),
 			response: t.Object({
-				event: t.Number(),
-				participants: t.Array(t.Object({ id: t.String() })),
+				id: t.Number(),
 			}),
 		},
 	)
 	.put(
-		"/events/:eventId/participants",
-		async ({ params, body, getCurrentUser, set }) => {
+		"/events/:id",
+		async ({ body, params, getCurrentUser, set }) => {
 			const { sub } = await getCurrentUser();
-			await eventsUseCase.updateEventParticipants({
-				ownerId: sub,
-				eventId: params.eventId,
-				participants: body,
-			});
+			await eventsUseCase.update(params.id, sub, body);
 			set.status = 200;
 		},
 		{
-			body: t.Array(
+			params: t.Object({
+				id: t.Number(),
+			}),
+			body: t.Partial(
 				t.Object({
 					name: t.String(),
-					email: t.String(),
+					exchangeDate: t.String({ format: "date" }),
+					budget: t.Number(),
+					description: t.String(),
 				}),
 			),
+		},
+	)
+	.delete(
+		"/events/:id",
+		async ({ params, getCurrentUser, set }) => {
+			const { sub } = await getCurrentUser();
+			await eventsUseCase.delete(params.id, sub);
+			set.status = 204;
+		},
+		{
 			params: t.Object({
-				eventId: t.Number(),
+				id: t.Number(),
 			}),
-			error: ({ code }) => {
-				switch (code as unknown as string) {
-					case "P2002":
-						return {
-							message: "Participant already exists in the event",
-						};
-					default:
-				}
-			},
 		},
 	);
