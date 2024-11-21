@@ -38,18 +38,18 @@ class UserRepository {
 	}
 
 	async upsertMany(users: Prisma.UserCreateInput[]) {
-		return prisma.$transaction(
-			users.map((part) =>
-				prisma.user.upsert({
-					create: part,
-					update: {},
-					where: { email: part.email },
-					select: {
-						id: true,
-					},
-				}),
-			),
+		const upsertOperations = users.map((user) =>
+			prisma.user.upsert({
+				create: user,
+				update: {},
+				where: { email: user.email },
+				select: {
+					id: true,
+				},
+			}),
 		);
+
+		return prisma.$transaction(upsertOperations);
 	}
 }
 

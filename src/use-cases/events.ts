@@ -9,10 +9,11 @@ class EventsUseCase {
 		event: { ownerId: string; name: string };
 		participants: Prisma.UserCreateInput[];
 	}) {
-		const response = await eventRepository.create(data.event);
-		const participantsResult = await userRepository.upsertMany(
-			data.participants,
-		);
+		 const [response, participantsResult] = await Promise.all([
+			eventRepository.create(data.event),
+			userRepository.upsertMany(data.participants),
+		]);
+	
 		await eventParticipationRepository.createMany(
 			participantsResult.map((participant) => {
 				return {
@@ -29,15 +30,12 @@ class EventsUseCase {
 		ownerId: string;
 		participants: Prisma.UserCreateInput[];
 	}) {
-		const event = await eventRepository.findFirst({
-			id: data.eventId,
-			ownerId: data.ownerId,
-		});
-		if (!event) throw new UnauthorizedError();
 
-		const participantsResult = await userRepository.upsertMany(
-			data.participants,
-		);
+		const [event, participantsResult] = await Promise.all([
+			eventRepository.get(data.eventId, data.ownerId),
+			userRepository.upsertMany(data.participants),
+		])
+		if (!event) throw new UnauthorizedError();
 		await eventParticipationRepository.createMany(
 			participantsResult.map((participant) => {
 				return {
