@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@prisma/client";
 
-class AuthLinkRepository {
+export class AuthLinkRepository {
 	async create(data: Prisma.AuthLinkUncheckedCreateInput) {
 		return prisma.authLink.create({
 			data,

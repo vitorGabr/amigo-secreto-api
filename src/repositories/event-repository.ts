@@ -2,7 +2,7 @@ import { UnauthorizedError } from "@/http/errors/unauthorized-error";
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@prisma/client";
 
-class EventRepository {
+export class EventRepository {
 	async get(eventId: number, userId: string) {
 		const event = await prisma.event.findFirst({
 			where: { id: eventId, ownerId: userId },

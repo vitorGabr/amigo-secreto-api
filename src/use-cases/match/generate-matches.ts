@@ -1,16 +1,23 @@
 import { UnauthorizedError } from "@/http/errors/unauthorized-error";
 import { sendMatchingParticipantsEmail } from "@/mails/handlers/send-matching-participants-email";
-import { eventRepository } from "@/repositories/event";
-import { userRepository } from "@/repositories/user";
+import type { EventRepository } from "@/repositories/event-repository";
+import type { MatchRepository } from "@/repositories/match-repository";
+import type { UserRepository } from "@/repositories/user-repository";
 
-class MatchedUseCases {
-	async generate(data: {
+export class GenerateMatches {
+	constructor(
+		private eventRepository: EventRepository,
+		private userRepository: UserRepository,
+		private matchRepository: MatchRepository,
+	) {}
+
+	async execute(data: {
 		eventId: number;
 		userId: string;
 	}) {
 		const [event, participants] = await Promise.all([
-			eventRepository.get(data.eventId, data.userId),
-			userRepository.findManyByEventParticipation(data.eventId),
+			this.eventRepository.get(data.eventId, data.userId),
+			this.userRepository.findManyByEventParticipation(data.eventId),
 		]);
 
 		if (!event) throw new UnauthorizedError();
@@ -28,6 +35,14 @@ class MatchedUseCases {
 			};
 		});
 
+		await this.matchRepository.createMany(
+			matches.map((match) => ({
+				giverId: match.giver.id,
+				receiverId: match.receiver.id,
+				eventId: data.eventId,
+			})),
+		);
+
 		sendMatchingParticipantsEmail({
 			eventName: event.name,
 			ownerName: event.owner.name,
@@ -38,5 +53,3 @@ class MatchedUseCases {
 		});
 	}
 }
-
-export const matchesUseCases = new MatchedUseCases();
