@@ -7,7 +7,6 @@ export async function sendAuthLinkEmail(email: string, authLink: URL) {
 		to: email,
 		subject: "Link para login",
 		react: AuthenticationMagicLinkTemplate({
-			userEmail: email,
 			authLink: authLink.toString(),
 		}),
 	});

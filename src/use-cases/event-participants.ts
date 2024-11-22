@@ -5,7 +5,7 @@ import { userRepository } from "@/repositories/user";
 import type { Prisma } from "@prisma/client";
 
 class EventParticipants {
-	async update(data: {
+	async addParticipantsToEvent(data: {
 		eventId: number;
 		ownerId: string;
 		participants: Prisma.UserCreateInput[];

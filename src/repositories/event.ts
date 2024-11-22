@@ -12,6 +12,7 @@ class EventRepository {
 				budget: true,
 				exchangeDate: true,
 				description: true,
+				ownerId: true,
 				owner: {
 					select: {
 						name: true,

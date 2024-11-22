@@ -10,7 +10,7 @@ export const eventParticipantsRoute = new Elysia({
 		"/events/:eventId/participants",
 		async ({ params, body, getCurrentUser, set }) => {
 			const { sub } = await getCurrentUser();
-			await eventParticipantsUseCase.update({
+			await eventParticipantsUseCase.addParticipantsToEvent({
 				ownerId: sub,
 				eventId: params.eventId,
 				participants: body,

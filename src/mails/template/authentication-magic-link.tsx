@@ -15,52 +15,58 @@ import {
 import * as React from "react";
 
 interface AuthenticationMagicLinkTemplateProps {
-	userEmail: string;
 	authLink: string;
 }
 
 export default function AuthenticationMagicLinkTemplate({
-	userEmail,
 	authLink,
 }: AuthenticationMagicLinkTemplateProps) {
-	const previewText = "Faça login na Pizza Shop";
-
 	return (
 		<Html>
 			<Head />
-			<Preview>{previewText}</Preview>
+			<Preview>Acesse seu Amigo Secreto - Link Mágico de Login</Preview>
 			<Tailwind>
-				<Body className="bg-white my-auto mx-auto font-sans">
-					<Container className="border border-solid border-[#eaeaea] rounded my-[40px] mx-auto p-[20px] w-[465px]">
-						<Section className="mt-[32px] text-center">
-							<span className="text-2xl">🍕</span>
+				<Body className="bg-gray-100 font-sans">
+					<Container className="mx-auto my-10 max-w-[500px] rounded-lg bg-white p-8 shadow-lg">
+						<Section className="text-center">
+							<Text className="text-5xl">🎁</Text>
+							<Heading className="mt-4 text-2xl font-bold text-gray-800">
+								Bem-vindo ao Amigo Secreto!
+							</Heading>
 						</Section>
-						<Heading className="text-black text-[24px] font-normal text-center p-0 my-[30px] mx-0">
-							Faça login na Pizza Shop
-						</Heading>
-						<Text className="text-black text-[14px] leading-[24px]">
-							Você solicitou um link para login na Pizza Shop através do email{" "}
-							{userEmail}.
-						</Text>
-						<Section className="text-center mt-[32px] mb-[32px]">
+						<Section className="mt-6">
+							<Text className="text-gray-600">Olá! 👋</Text>
+							<Text className="text-gray-600">
+								Clique no botão abaixo para acessar sua conta do Amigo Secreto.
+								Este link é válido por 24 horas.
+							</Text>
+						</Section>
+						<Section className="mt-8 text-center">
 							<Button
-								className="bg-sky-500 rounded text-white px-5 py-3 text-[12px] font-semibold no-underline text-center"
+								className="inline-block rounded-lg bg-red-500 px-6 py-3 text-center text-sm font-semibold text-white no-underline hover:bg-red-600"
 								href={authLink}
 							>
-								Entrar agora
+								Acessar Amigo Secreto
 							</Button>
 						</Section>
-						<Text className="text-black text-[14px] leading-[24px]">
-							ou copie a URL abaixo e cole em seu browser:{" "}
-							<Link href={authLink} className="text-sky-500 no-underline">
-								{authLink}
+						<Hr className="my-6 border-gray-200" />
+						<Section>
+							<Text className="text-sm text-gray-500">
+								Se você não solicitou este email, pode ignorá-lo com segurança.
+							</Text>
+							<Text className="mt-4 text-sm text-gray-500">
+								Por questões de segurança, este link funcionará apenas uma vez e
+								expira em 24 horas.
+							</Text>
+						</Section>
+						<Section className="mt-8 text-center">
+							<Text className="text-xs text-gray-400">
+								© 2024 Amigo Secreto. Todos os direitos reservados.
+							</Text>
+							<Link href="#" className="mt-2 text-xs text-gray-400 underline">
+								Política de Privacidade
 							</Link>
-						</Text>
-						<Hr className="border border-solid border-[#eaeaea] my-[26px] mx-0 w-full" />
-						<Text className="text-[#666666] text-[12px] leading-[24px]">
-							Se você não solicitou esse link de autenticação, apenas descarte
-							esse e-mail.
-						</Text>
+						</Section>
 					</Container>
 				</Body>
 			</Tailwind>
@@ -69,6 +75,5 @@ export default function AuthenticationMagicLinkTemplate({
 }
 
 AuthenticationMagicLinkTemplate.PreviewProps = {
-	userEmail: "teste@teste.com",
 	authLink: "https://pizza-shop.com/auth/magic-link?token=123456",
 };

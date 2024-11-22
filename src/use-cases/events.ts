@@ -3,6 +3,12 @@ import { eventRepository } from "@/repositories/event";
 import type { Prisma } from "@prisma/client";
 
 class EventsUseCase {
+	async getById(id: number, ownerId: string) {
+		const event = await eventRepository.get(id, ownerId);
+		if (!event) throw new UnauthorizedError();
+		return event;
+	}
+
 	async create(data: Prisma.EventUncheckedCreateInput) {
 		const response = await eventRepository.create(data);
 		return response;

@@ -30,6 +30,23 @@ export const eventsRoute = new Elysia({
 			}),
 		},
 	)
+	.get('/events/:id', async ({ params, getCurrentUser }) => {
+		const { sub } = await getCurrentUser();
+		const response = await eventsUseCase.getById(params.id, sub);
+		return response;
+	},{
+		params: t.Object({
+			id: t.Number(),
+		}),
+		response: t.Object({
+			id: t.Number(),
+			name: t.String(),
+			exchangeDate: t.Nullable(t.Date()),
+			budget: t.Nullable(t.Number()),
+			description: t.Nullable(t.String()),
+			ownerId: t.String(),
+		}),
+	})
 	.put(
 		"/events/:id",
 		async ({ body, params, getCurrentUser, set }) => {
