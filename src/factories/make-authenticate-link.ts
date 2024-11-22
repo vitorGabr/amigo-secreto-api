@@ -1,5 +1,5 @@
 import { AuthLinkRepository } from "@/repositories/auth-link-repository";
-import { AuthenticateLink } from "@/use-cases/user/authenticate-link";
+import { AuthenticateLink } from "@/use-cases/auth/authenticate-link";
 
 export function makeAuthenticateLinkUseCase() {
 	const authLinkRepository = new AuthLinkRepository();

@@ -3,7 +3,7 @@ import { authentication } from "@/http/middleware/authentication";
 import Elysia, { t } from "elysia";
 
 export const authenticateLink = new Elysia().use(authentication).get(
-	"/auth-links/authenticate",
+	"/auth/email/verify",
 	async ({ signUser, query, redirect: internalRedirect }) => {
 		const makeAuthenticateFromLink = makeAuthenticateLinkUseCase();
 		const reponse = await makeAuthenticateFromLink.execute({
