@@ -1,5 +1,5 @@
 import { UnauthorizedError } from "@/http/errors/unauthorized-error";
-import { sendMatchingParticipantsEmail } from "@/mails/handlers/send-matching-participants-email";
+import { sendMatchingParticipantsEmail } from "@/emails/services/send-matching-participants-email";
 import type { EventRepository } from "@/repositories/event-repository";
 import type { MatchRepository } from "@/repositories/match-repository";
 import type { UserRepository } from "@/repositories/user-repository";
