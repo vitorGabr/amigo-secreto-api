@@ -1,38 +1,21 @@
-FROM oven/bun AS build
+FROM oven/bun
 
 WORKDIR /app
 
-# Cache packages installation
-COPY package.json package.json
-COPY bun.lockb bun.lockb
+COPY package.json .
+COPY bun.lockb .
 
-RUN bun install
+RUN bun install --production
 
 # Generate Prisma Client
-COPY prisma ./prisma/
-RUN bun prisma generate
+COPY prisma .
+RUN bunx prisma generate
 
-COPY ./src ./src
+COPY src src
 COPY tsconfig.json .
+# COPY public public
 
-ENV NODE_ENV=production
-
-RUN bun build \
-	--compile \
-	--minify-whitespace \
-	--minify-syntax \
-	--target bun \
-	--outfile server \
-	./src/http/server.ts
-
-FROM gcr.io/distroless/base
-
-WORKDIR /app
-
-COPY --from=build /app/server server
-
-ENV NODE_ENV=production
-
-CMD ["./server"]
+ENV NODE_ENV production
+CMD ["bun", "run","start"]
 
 EXPOSE 3000
