@@ -9,7 +9,7 @@ COPY bun.lockb bun.lockb
 RUN bun install
 
 # Generate Prisma Client
-COPY prisma ./prisma/
+COPY prisma .
 RUN bunx prisma generate
 
 COPY ./src ./src
