@@ -28,7 +28,7 @@ export const createEvent = new Elysia().use(authentication).post(
 	{
 		body: t.Object({
 			name: t.String(),
-			exchangeDate: t.Optional(t.String({ format: "date" })),
+			exchangeDate: t.Optional(t.Date()),
 			budget: t.Optional(t.Number()),
 			description: t.Optional(t.String()),
 			participants: t.Optional(
