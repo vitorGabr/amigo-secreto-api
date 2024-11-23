@@ -9,8 +9,8 @@ COPY bun.lockb bun.lockb
 RUN bun install
 
 # Generate Prisma Client
-COPY prisma .
-RUN bunx prisma generate
+COPY prisma ./prisma/
+RUN bun prisma generate
 
 COPY ./src ./src
 COPY tsconfig.json .
