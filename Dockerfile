@@ -12,7 +12,7 @@ RUN bun install
 COPY prisma .
 RUN bunx prisma generate
 
-COPY src src
+COPY ./src ./src
 COPY tsconfig.json .
 
 ENV NODE_ENV=production
