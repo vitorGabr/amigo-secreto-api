@@ -1,5 +1,5 @@
 import { UnauthorizedError } from "@/http/errors/unauthorized-error";
-import { sendAuthLinkEmail } from "@/emails/services/send-auth-link-email";
+import { sendAuthLinkEmail } from "@/emails/handlers/send-auth-link-email";
 import type { AuthLinkRepository } from "@/repositories/auth-link-repository";
 import type { UserRepository } from "@/repositories/user-repository";
 import { randomUUIDv7 } from "bun";

@@ -1,3 +1,4 @@
+import { makeAddParticipantsToEventUseCase } from "@/factories/make-add-participants-to-event";
 import { makeCreateEventUseCase } from "@/factories/make-create-event";
 import { authentication } from "@/http/middleware/authentication";
 import Elysia, { t } from "elysia";
@@ -5,13 +6,22 @@ import Elysia, { t } from "elysia";
 export const createEvent = new Elysia().use(authentication).post(
 	"/events",
 	async ({ body, getCurrentUser, set }) => {
+		const { participants, ...data } = body;
 		const { sub } = await getCurrentUser();
 		const makeCreateEvent = makeCreateEventUseCase();
+		const makeAddParticipants = makeAddParticipantsToEventUseCase();
 		const response = await makeCreateEvent.execute({
-			...body,
+			...data,
 			ownerId: sub,
 		});
 
+		if (participants) {
+			await makeAddParticipants.execute({
+				eventId: response.id,
+				ownerId: sub,
+				participants,
+			});
+		}
 		set.status = 201;
 		return response;
 	},
@@ -21,6 +31,14 @@ export const createEvent = new Elysia().use(authentication).post(
 			exchangeDate: t.Optional(t.String({ format: "date" })),
 			budget: t.Optional(t.Number()),
 			description: t.Optional(t.String()),
+			participants: t.Optional(
+				t.Array(
+					t.Object({
+						name: t.String(),
+						email: t.String({ format: "email" }),
+					}),
+				),
+			),
 		}),
 		response: t.Object({
 			id: t.Number(),

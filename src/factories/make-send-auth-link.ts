@@ -1,6 +1,6 @@
 import { AuthLinkRepository } from "@/repositories/auth-link-repository";
 import { UserRepository } from "@/repositories/user-repository";
-import { SendAuthLink } from "@/use-cases/auth/send-auth-link";
+import { SendAuthLink } from "@/use-cases/user/send-auth-link";
 
 export function makeSendAuthLinkUseCase() {
 	const authLinkRepository = new AuthLinkRepository();

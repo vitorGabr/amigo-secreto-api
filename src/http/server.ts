@@ -3,7 +3,7 @@ import { Elysia } from "elysia";
 import { eventParticipantsRoutes } from "./routes/event-participants";
 import { eventsRoutes } from "./routes/events";
 import { matchesRoutes } from "./routes/matches";
-import { authRoutes } from "./routes/auth";
+import { authRoutes } from "./routes/user";
 
 const app = new Elysia()
 	.use(swagger())

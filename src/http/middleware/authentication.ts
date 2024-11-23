@@ -2,6 +2,7 @@ import cookie from "@elysiajs/cookie";
 import jwt from "@elysiajs/jwt";
 import Elysia, { type Static, t } from "elysia";
 import { UnauthorizedError } from "../errors/unauthorized-error";
+import { NotAOwnerError } from "../errors/not-a-owner-error";
 
 const jwtPayloadSchema = t.Object({
 	sub: t.String(),
@@ -10,10 +11,14 @@ const jwtPayloadSchema = t.Object({
 export const authentication = new Elysia()
 	.error({
 		UNAUTHORIZED: UnauthorizedError,
+		NOT_NOT_A_OWNER: NotAOwnerError,
 	})
 	.onError(({ code, error, set }) => {
 		switch (code) {
 			case "UNAUTHORIZED":
+				set.status = 401;
+				return { code, message: error.message };
+			case "NOT_NOT_A_OWNER":
 				set.status = 401;
 				return { code, message: error.message };
 		}

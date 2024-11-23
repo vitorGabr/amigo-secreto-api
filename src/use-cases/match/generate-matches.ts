@@ -1,8 +1,8 @@
-import { UnauthorizedError } from "@/http/errors/unauthorized-error";
-import { sendMatchingParticipantsEmail } from "@/emails/services/send-matching-participants-email";
+import { sendMatchingParticipantsEmail } from "@/emails/handlers/send-matching-participants-email";
 import type { EventRepository } from "@/repositories/event-repository";
 import type { MatchRepository } from "@/repositories/match-repository";
 import type { UserRepository } from "@/repositories/user-repository";
+import { NotAOwnerError } from "@/http/errors/not-a-owner-error";
 
 export class GenerateMatches {
 	constructor(
@@ -20,7 +20,7 @@ export class GenerateMatches {
 			this.userRepository.findManyByEventParticipation(data.eventId),
 		]);
 
-		if (!event) throw new UnauthorizedError();
+		if (!event) throw new NotAOwnerError();
 
 		if (participants.length < 2) {
 			throw new Error("Not enough participants in group");

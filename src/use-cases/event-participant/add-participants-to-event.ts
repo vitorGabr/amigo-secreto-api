@@ -1,3 +1,4 @@
+import { NotAOwnerError } from "@/http/errors/not-a-owner-error";
 import { UnauthorizedError } from "@/http/errors/unauthorized-error";
 import type { EventParticipantsRepository } from "@/repositories/event-participants-repository";
 import type { EventRepository } from "@/repositories/event-repository";
@@ -20,7 +21,7 @@ export class AddParticipantsToEvent {
 			this.eventRepository.get(data.eventId, data.ownerId),
 			this.userRepository.upsertMany(data.participants),
 		]);
-		if (!event) throw new UnauthorizedError();
+		if (!event) throw new NotAOwnerError();
 		await this.eventParticipantRepository.createMany(
 			participantsResult.map((participant) => {
 				return {
