@@ -8,6 +8,10 @@ COPY bun.lockb bun.lockb
 
 RUN bun install
 
+# Generate Prisma Client
+COPY prisma .
+RUN bunx prisma generate
+
 COPY ./src ./src
 
 ENV NODE_ENV=production
