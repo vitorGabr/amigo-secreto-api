@@ -10,7 +10,7 @@ RUN bun install
 
 # Generate Prisma Client
 COPY prisma ./prisma/
-RUN bun prisma generate
+RUN bunx prisma generate
 
 COPY ./src ./src
 COPY tsconfig.json .
