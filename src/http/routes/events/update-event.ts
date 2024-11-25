@@ -35,6 +35,9 @@ export const updateEvent = new Elysia().use(authentication).put(
 						name: t.String(),
 						email: t.String({ format: "email" }),
 					}),
+					{
+						maxItems: 50,
+					},
 				),
 			}),
 		),
