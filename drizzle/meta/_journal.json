@@ -22,6 +22,20 @@
       "when": 1732557723005,
       "tag": "0002_glossy_silver_centurion",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1732559503301,
+      "tag": "0003_pink_sunspot",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1732559548413,
+      "tag": "0004_mean_lockjaw",
+      "breakpoints": true
     }
   ]
 }

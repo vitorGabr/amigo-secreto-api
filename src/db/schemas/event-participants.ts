@@ -18,8 +18,8 @@ export const eventParticipants = pgTable(
 		userId: text("userId").notNull(),
 		createdAt: timestamp("created_at").defaultNow(),
 		updatedAt: timestamp("updated_at")
-			.defaultNow()
-			.$onUpdate(() => new Date()),
+		.defaultNow()
+		.$onUpdate(() => new Date()),
 	},
 	(table) => [uniqueIndex("unique_event_user").on(table.eventId, table.userId)],
 );

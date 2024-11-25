@@ -24,14 +24,5 @@ export const addParticipantsToEvent = new Elysia().use(authentication).put(
 		params: t.Object({
 			eventId: t.Number(),
 		}),
-		error: ({ code }) => {
-			switch (code as unknown as string) {
-				case "P2002":
-					return {
-						message: "Participant already exists in the event",
-					};
-				default:
-			}
-		},
 	},
 );

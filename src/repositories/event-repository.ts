@@ -27,7 +27,8 @@ export class EventRepository {
 	}
 
 	async create(data: InferInsertModel<typeof events>) {
-		return db.insert(events).values(data).returning();
+		const [event] = await db.insert(events).values(data).returning();
+		return event;
 	}
 
 	async findFirst(data: { id: number; ownerId: string }) {
