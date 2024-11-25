@@ -1,8 +1,6 @@
-import type { events } from "@/db/schemas";
 import { NotAOwnerError } from "@/http/errors/not-a-owner-error";
 import type { EventRepository } from "@/repositories/event-repository";
 import dayjs from "dayjs";
-import type { InferInsertModel } from "drizzle-orm";
 
 export class UpdateEvent {
 	constructor(private eventRepository: EventRepository) {}

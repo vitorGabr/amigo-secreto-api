@@ -1,4 +1,3 @@
-import type { users } from "@/db/schemas";
 import { NotAOwnerError } from "@/http/errors/not-a-owner-error";
 import type { EventParticipantsRepository } from "@/repositories/event-participants-repository";
 import type { EventRepository } from "@/repositories/event-repository";

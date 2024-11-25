@@ -1,6 +1,6 @@
 import { db } from "@/db/connection";
 import { authLinks } from "@/db/schemas";
-import { eq, type InferInsertModel } from "drizzle-orm";
+import { type InferInsertModel, eq } from "drizzle-orm";
 
 export class AuthLinkRepository {
 	async create(data: InferInsertModel<typeof authLinks>) {

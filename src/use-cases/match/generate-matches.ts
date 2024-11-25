@@ -1,8 +1,8 @@
 import { sendMatchingParticipantsEmail } from "@/emails/handlers/send-matching-participants-email";
+import { NotAOwnerError } from "@/http/errors/not-a-owner-error";
 import type { EventRepository } from "@/repositories/event-repository";
 import type { MatchRepository } from "@/repositories/match-repository";
 import type { UserRepository } from "@/repositories/user-repository";
-import { NotAOwnerError } from "@/http/errors/not-a-owner-error";
 
 export class GenerateMatches {
 	constructor(
@@ -34,7 +34,6 @@ export class GenerateMatches {
 				receiver: nextParticipant,
 			};
 		});
-
 		await this.matchRepository.createMany(
 			matches.map((match) => ({
 				giverId: match.giver.id,

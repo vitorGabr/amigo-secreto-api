@@ -1,7 +1,7 @@
 import { db } from "@/db/connection";
 import { events, users } from "@/db/schemas";
 import { UnauthorizedError } from "@/http/errors/unauthorized-error";
-import { and, eq, type InferInsertModel } from "drizzle-orm";
+import { type InferInsertModel, and, eq } from "drizzle-orm";
 
 export class EventRepository {
 	async get(eventId: number, userId: string) {
@@ -48,11 +48,7 @@ export class EventRepository {
 			description?: string;
 		},
 	) {
-		return db
-			.update(events)
-			.set(data)
-			.where(eq(events.id, id))
-			.returning();
+		return db.update(events).set(data).where(eq(events.id, id)).returning();
 	}
 
 	async delete(eventId: number) {

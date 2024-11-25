@@ -6,9 +6,9 @@ import {
 	text,
 	timestamp,
 } from "drizzle-orm/pg-core";
-import { users } from "./users";
 import { eventParticipants } from "./event-participants";
 import { matches } from "./matches";
+import { users } from "./users";
 
 export const events = pgTable("events", {
 	id: serial("id").primaryKey(),

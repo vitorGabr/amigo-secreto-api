@@ -1,10 +1,10 @@
-import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
-import { events } from "./events";
-import { eventParticipants } from "./event-participants";
-import { matches } from "./matches";
-import { authLinks } from "./auth-links";
 import { createId } from "@paralleldrive/cuid2";
+import { relations } from "drizzle-orm";
+import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { authLinks } from "./auth-links";
+import { eventParticipants } from "./event-participants";
+import { events } from "./events";
+import { matches } from "./matches";
 
 export const users = pgTable("users", {
 	id: text("id")

@@ -1,6 +1,6 @@
 import { db } from "@/db/connection";
 import { eventParticipants, users } from "@/db/schemas";
-import { eq, type InferInsertModel } from "drizzle-orm";
+import { type InferInsertModel, eq } from "drizzle-orm";
 
 export class UserRepository {
 	async create(user: InferInsertModel<typeof users>) {
