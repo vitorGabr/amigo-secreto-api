@@ -1,55 +1,43 @@
-import { prisma } from "@/lib/prisma";
-import type { Prisma } from "@prisma/client";
+import { db } from "@/db/connection";
+import { eventParticipants, users } from "@/db/schemas";
+import { eq, type InferInsertModel } from "drizzle-orm";
 
 export class UserRepository {
-	async create(user: Prisma.UserCreateInput) {
-		return prisma.user.upsert({
-			where: {
-				email: user.email,
-			},
-			update: {},
-			create: user,
-		});
+	async create(user: InferInsertModel<typeof users>) {
+		return db.insert(users).values(user).onConflictDoNothing().execute();
 	}
 
 	async findByEmail(email: string) {
-		return prisma.user.findFirst({
-			where: {
-				email,
-			},
-		});
+		const [user] = await db
+			.select()
+			.from(users)
+			.where(eq(users.email, email))
+			.execute();
+		return user;
 	}
 
 	async findManyByEventParticipation(eventId: number) {
-		return prisma.user.findMany({
-			where: {
-				eventParticipations: {
-					some: {
-						eventId,
-					},
-				},
-			},
-			select: {
-				id: true,
-				name: true,
-				email: true,
-			},
-		});
+		return db
+			.select({
+				id: users.id,
+				name: users.name,
+				email: users.email,
+			})
+			.from(users)
+			.innerJoin(eventParticipants, eq(eventParticipants.userId, users.id))
+			.where(eq(eventParticipants.eventId, eventId))
+			.execute();
 	}
 
-	async upsertMany(users: Prisma.UserCreateInput[]) {
-		const upsertOperations = users.map((user) =>
-			prisma.user.upsert({
-				create: user,
-				update: {},
-				where: { email: user.email },
-				select: {
-					id: true,
-				},
-			}),
-		);
-
-		return prisma.$transaction(upsertOperations);
+	async upsertMany(data: { email: string; name: string }[]) {
+		return db
+			.insert(users)
+			.values(data)
+			.onConflictDoNothing()
+			.returning({
+				id: users.id,
+			})
+			.execute();
 	}
 }
 

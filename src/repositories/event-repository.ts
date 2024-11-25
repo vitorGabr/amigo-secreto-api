@@ -1,52 +1,61 @@
+import { db } from "@/db/connection";
+import { events, users } from "@/db/schemas";
 import { UnauthorizedError } from "@/http/errors/unauthorized-error";
-import { prisma } from "@/lib/prisma";
-import type { Prisma } from "@prisma/client";
+import { and, eq, type InferInsertModel } from "drizzle-orm";
 
 export class EventRepository {
 	async get(eventId: number, userId: string) {
-		const event = await prisma.event.findFirst({
-			where: { id: eventId, ownerId: userId },
-			select: {
-				id: true,
-				name: true,
-				budget: true,
-				exchangeDate: true,
-				description: true,
-				ownerId: true,
+		const [event] = await db
+			.select({
+				id: events.id,
+				name: events.name,
+				budget: events.budget,
+				exchangeDate: events.exchangeDate,
+				description: events.description,
+				ownerId: events.ownerId,
 				owner: {
-					select: {
-						name: true,
-					},
+					name: users.name,
 				},
-			},
-		});
+			})
+			.from(events)
+			.innerJoin(users, eq(users.id, userId))
+			.where(and(eq(events.id, eventId), eq(events.ownerId, userId)));
+
 		if (!event) throw new UnauthorizedError();
 
 		return event;
 	}
 
-	async create(data: Prisma.EventUncheckedCreateInput) {
-		return prisma.event.create({
-			data: data,
-			select: {
-				id: true,
-			},
-		});
+	async create(data: InferInsertModel<typeof events>) {
+		return db.insert(events).values(data).returning();
 	}
 
 	async findFirst(data: { id: number; ownerId: string }) {
-		return prisma.event.findFirst({ where: data, select: { id: true } });
+		const [event] = await db
+			.select({ id: events.id })
+			.from(events)
+			.where(and(eq(events.id, data.id), eq(events.ownerId, data.ownerId)));
+		return event;
 	}
 
-	async update(id: number, data: Prisma.EventUpdateInput) {
-		return prisma.event.update({
-			where: { id: id },
-			data,
-		});
+	async update(
+		id: number,
+		data: {
+			name?: string;
+			exchangeDate?: Date;
+			budget?: number;
+			description?: string;
+		},
+	) {
+		return db
+			.update(events)
+			.set(data)
+			.where(eq(events.id, id))
+			.returning();
 	}
 
 	async delete(eventId: number) {
-		await prisma.event.delete({ where: { id: eventId } });
+		return db.delete(events).where(eq(events.id, eventId)).returning();
 	}
 }
 

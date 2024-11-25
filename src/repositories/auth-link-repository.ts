@@ -1,27 +1,22 @@
-import { prisma } from "@/lib/prisma";
-import type { Prisma } from "@prisma/client";
+import { db } from "@/db/connection";
+import { authLinks } from "@/db/schemas";
+import { eq, type InferInsertModel } from "drizzle-orm";
 
 export class AuthLinkRepository {
-	async create(data: Prisma.AuthLinkUncheckedCreateInput) {
-		return prisma.authLink.create({
-			data,
-		});
+	async create(data: InferInsertModel<typeof authLinks>) {
+		return db.insert(authLinks).values(data).returning();
 	}
 
 	async findByCode(code: string) {
-		return prisma.authLink.findFirst({
-			where: {
-				code,
-			},
-		});
+		const [data] = await db
+			.select()
+			.from(authLinks)
+			.where(eq(authLinks.code, code));
+		return data;
 	}
 
 	async delete(id: number) {
-		return prisma.authLink.delete({
-			where: {
-				id,
-			},
-		});
+		return db.delete(authLinks).where(eq(authLinks.id, id));
 	}
 }
 

@@ -7,8 +7,6 @@ export class CreateUser {
 		email: string;
 		name: string;
 	}) {
-		try {
-			await this.userRepository.create(data);
-		} catch (error) {}
+		await this.userRepository.create(data)
 	}
 }

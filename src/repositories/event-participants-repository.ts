@@ -1,11 +1,10 @@
-import { prisma } from "@/lib/prisma";
-import type { Prisma } from "@prisma/client";
+import { db } from "@/db/connection";
+import { eventParticipants } from "@/db/schemas";
+import type { InferInsertModel } from "drizzle-orm";
 
 export class EventParticipantsRepository {
-	async createMany(data: Prisma.EventParticipantCreateManyInput[]) {
-		return prisma.eventParticipant.createMany({
-			data: data,
-		});
+	async createMany(data: InferInsertModel<typeof eventParticipants>[]) {
+		return db.insert(eventParticipants).values(data).returning();
 	}
 }
 

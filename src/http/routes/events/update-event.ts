@@ -26,10 +26,10 @@ export const updateEvent = new Elysia().use(authentication).put(
 		}),
 		body: t.Partial(
 			t.Object({
-				name: t.String(),
-				exchangeDate: t.String({ format: "date" }),
-				budget: t.Number(),
-				description: t.String(),
+				name: t.Optional(t.String()),
+				exchangeDate: t.Optional(t.Date()),
+				budget: t.Optional(t.Number()),
+				description: t.Optional(t.String()),
 				participants: t.Optional(
 					t.Array(
 						t.Object({
