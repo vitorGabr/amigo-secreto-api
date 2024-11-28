@@ -14,13 +14,19 @@ export const getEventById = new Elysia().use(authentication).get(
 		params: t.Object({
 			eventId: t.Number(),
 		}),
-		response: t.Object({
-			id: t.Number(),
-			name: t.String(),
-			exchangeDate: t.Nullable(t.Date()),
-			budget: t.Nullable(t.Number()),
-			description: t.Nullable(t.String()),
-			ownerId: t.String(),
-		}),
+		response: t.Object(
+			{
+				id: t.Number(),
+				name: t.String(),
+				exchangeDate: t.Nullable(t.Date()),
+				budget: t.Nullable(t.Number()),
+				description: t.Nullable(t.String()),
+				ownerId: t.String(),
+			},
+			{
+				description: "Event details",
+			},
+		),
+		type: "json",
 	},
 );

@@ -41,5 +41,11 @@ export const updateEvent = new Elysia().use(authentication).put(
 				),
 			}),
 		),
+		response: {
+			204: t.Void({
+				description: "Event updated successfully",
+			}),
+		},
+		type: "json",
 	},
 );

@@ -43,8 +43,14 @@ export const createEvent = new Elysia().use(authentication).post(
 				),
 			),
 		}),
-		response: t.Object({
-			id: t.Number(),
-		}),
+		response: t.Object(
+			{
+				id: t.Number(),
+			},
+			{
+				description: "Event created",
+			},
+		),
+		type: "json",
 	},
 );

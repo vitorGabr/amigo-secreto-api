@@ -13,5 +13,9 @@ export const createUser = new Elysia().use(authentication).post(
 			email: t.String({ format: "email" }),
 			name: t.String(),
 		}),
+		response: t.Void({
+			description: "User created",
+		}),
+		type: "json",
 	},
 );

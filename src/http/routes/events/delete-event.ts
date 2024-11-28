@@ -7,14 +7,17 @@ export const deleteEvent = new Elysia().use(authentication).delete(
 	async ({ params, getCurrentUser, set }) => {
 		const { sub } = await getCurrentUser();
 		const makeDeleteEvent = makeDeleteEventUseCase();
-		const response = await makeDeleteEvent.execute(params.eventId, sub);
+		await makeDeleteEvent.execute(params.eventId, sub);
 
-		set.status = 201;
-		return response;
+		set.status = 204;
 	},
 	{
 		params: t.Object({
 			eventId: t.Number(),
 		}),
+		response: {
+			204: t.Void({ description: "Event deleted" }),
+		},
+		type: "json",
 	},
 );

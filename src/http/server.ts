@@ -1,3 +1,4 @@
+import cors from "@elysiajs/cors";
 import swagger from "@elysiajs/swagger";
 import { Elysia } from "elysia";
 import { eventParticipantsRoutes } from "./routes/event-participants";
@@ -6,7 +7,18 @@ import { matchesRoutes } from "./routes/matches";
 import { authRoutes } from "./routes/user";
 
 const app = new Elysia()
-	.use(swagger())
+	.use(cors())
+	.use(
+		swagger({
+			documentation: {
+				info: {
+					title: "Amigo Secreto API",
+					version: "1.0.0",
+					description: "API para gerenciamento de eventos de amigo secreto",
+				},
+			},
+		}),
+	)
 	.use(eventParticipantsRoutes)
 	.use(eventsRoutes)
 	.use(matchesRoutes)

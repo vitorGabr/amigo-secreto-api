@@ -13,12 +13,16 @@ export const authenticateLink = new Elysia().use(authentication).get(
 			sub: reponse.userId,
 		});
 
-		const redirectUrl = process.env.AUTH_REDIRECT_URL;
-		return redirectUrl && redirect(redirectUrl, 302);
+		const redirectUrl = process.env.AUTH_REDIRECT_URL ?? "";
+		return redirect(redirectUrl, 302);
 	},
 	{
 		query: t.Object({
 			code: t.String(),
 		}),
+		response: {
+			302: t.Object({}),
+		},
+		type: "json",
 	},
 );

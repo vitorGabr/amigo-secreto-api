@@ -14,5 +14,11 @@ export const generateMatches = new Elysia().use(authentication).get(
 		params: t.Object({
 			eventId: t.Number(),
 		}),
+		response: {
+			201: t.Void({
+				description: "Matches generated successfully",
+			}),
+		},
+		type: "json",
 	},
 );

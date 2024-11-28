@@ -15,8 +15,14 @@ export const sendAuthLink = new Elysia().use(authentication).post(
 		body: t.Object({
 			email: t.String({ format: "email" }),
 		}),
-		response: t.Object({
-			authLink: t.String(),
-		}),
+		response: t.Object(
+			{
+				authLink: t.String(),
+			},
+			{
+				description: "Auth link sent",
+			},
+		),
+		type: "json",
 	},
 );

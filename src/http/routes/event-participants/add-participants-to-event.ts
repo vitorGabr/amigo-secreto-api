@@ -24,5 +24,7 @@ export const addParticipantsToEvent = new Elysia().use(authentication).put(
 		params: t.Object({
 			eventId: t.Number(),
 		}),
+		response: t.Void({ description: "Participants added to event" }),
+		type: "json",
 	},
 );
