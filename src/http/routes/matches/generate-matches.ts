@@ -19,6 +19,6 @@ export const generateMatches = new Elysia().use(authentication).get(
 				description: "Matches generated successfully",
 			}),
 		},
-		type: "json",
+		type: 'json',
 	},
 );
